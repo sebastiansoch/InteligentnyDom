@@ -9,19 +9,19 @@ package org.inteligentnydom.client.producent;
  *
  * @author ssoch
  */
-public class DoorUtil implements HardwareSwitch {
+public class BlindsUtil implements HardwareSwitch {
 
-    private String state = "OPEN";
+    private String state = "UP";
 
-    private boolean doorOpen() {
-        System.out.println("Door Open");
-        state = "OPEN";
+    private boolean blindsUp() {
+        System.out.println("Blinds Up");
+        state = "UP";
         return true;
     }
 
-    private boolean doorClose() {
-        System.out.println("Door Close");
-        state = "CLOSE";
+    private boolean blindsDown() {
+        System.out.println("Blinds Down");
+        state = "DOWN";
         return true;
     }
 
@@ -32,17 +32,17 @@ public class DoorUtil implements HardwareSwitch {
 
     @Override
     public boolean switchOff() {
-        return doorClose();
+        return blindsDown();
     }
 
     @Override
     public boolean switchOn() {
-        return doorOpen();
+        return blindsUp();
     }
 
     @Override
     public boolean isSwitchOn() {
-        if (state.equals("OPEN")) {
+        if (state.equals("UP")) {
             return true;
         }
 

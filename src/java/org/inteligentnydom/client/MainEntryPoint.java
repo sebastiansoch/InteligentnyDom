@@ -13,8 +13,11 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import org.inteligentnydom.client.producent.BlindsUtil;
 import org.inteligentnydom.client.producent.DoorUtil;
 import org.inteligentnydom.client.producent.LightUtil;
+import org.inteligentnydom.client.producent.WindowUtil;
+import org.inteligentnydom.client.widget.StatusButton;
 
 /**
  * Main entry point.
@@ -22,8 +25,12 @@ import org.inteligentnydom.client.producent.LightUtil;
  * @author ssoch
  */
 public class MainEntryPoint implements EntryPoint {
-    private static final String DRZWI = "Drzwi ";
     private static final String SWIATLO = "Światło ";
+    private static final String DRZWI = "Drzwi ";
+    private static final String OKNA = "Okna ";
+    private static final String ROLETY = "Rolety ";
+    
+    
 
     /**
      * Creates a new instance of MainEntryPoint
@@ -37,45 +44,38 @@ public class MainEntryPoint implements EntryPoint {
      */
     public void onModuleLoad() {
 
-        
-        String[] lightAction = new String[]{"ON"};        
-        final Button lightBtn = new Button(SWIATLO + lightAction[0]);
         LightUtil lightUtil = new LightUtil();
-        lightBtn.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                if (lightAction[0].equals("ON")) {
-                    lightUtil.switchOff();
-                    lightAction[0] = "OFF";
-                } else {
-                    lightUtil.switchOn();
-                    lightAction[0] = "ON";
-                }
-                
-                lightBtn.setText(SWIATLO + lightAction[0]);
-            }
-        });
+        HardwareButton lightButton = new HardwareButton(lightUtil, SWIATLO);
+        lightButton.init();
         
-
-        String[] doorAction = new String[]{"OPEN"};
-        final Button doorBtn = new Button(DRZWI + doorAction[0]);
         DoorUtil doorUtil = new DoorUtil();
-        doorBtn.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                if (doorAction[0].equals("OPEN")) {
-                    doorUtil.doorClose();
-                    doorAction[0] = "CLOSE";
-                } else {
-                    doorUtil.doorOpen();
-                    doorAction[0] = "OPEN";
-                }
-                
-                doorBtn.setText(DRZWI + doorAction[0]);
-            }
-        });
+        HardwareButton doorButton = new HardwareButton(doorUtil, DRZWI);
+        doorButton.init();
+
+        WindowUtil windowUtil = new WindowUtil();
+        HardwareButton windowButton = new HardwareButton(windowUtil, OKNA);
+        windowButton.init();
+        
+        BlindsUtil blindsUtil = new BlindsUtil();
+        HardwareButton blindsButton = new HardwareButton(blindsUtil, ROLETY);
+        blindsButton.init();
+        
+        StatusButton statusButton = new StatusButton("Status");
+        statusButton.init();
+        statusButton.add(new HardwareButtonChecker(lightUtil, Critical.FALSE));
+        statusButton.add(new HardwareButtonChecker(doorUtil, Critical.TRUE));
+        statusButton.add(new HardwareButtonChecker(windowUtil, Critical.TRUE));
+        statusButton.add(new HardwareButtonChecker(blindsUtil, Critical.FALSE));
         
         VerticalPanel verticalPanel = new VerticalPanel();
-        verticalPanel.add(lightBtn);
-        verticalPanel.add(doorBtn);
+        verticalPanel.add(lightButton.getButton());
+        verticalPanel.add(doorButton.getButton());
+        verticalPanel.add(windowButton.getButton());
+        verticalPanel.add(blindsButton.getButton());
+        verticalPanel.add(statusButton);
+        
         RootPanel.get().add(verticalPanel);
     }
+    
+    
 }
